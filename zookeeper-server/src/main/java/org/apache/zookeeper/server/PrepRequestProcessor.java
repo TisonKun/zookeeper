@@ -742,7 +742,7 @@ public class PrepRequestProcessor extends ZooKeeperCriticalThread implements Req
                      */
                     if (ke != null) {
                         type = OpCode.error;
-                        txn = new ErrorTxn(Code.RUNTIMEINCONSISTENCY.intValue());
+                        txn = new ErrorTxn(Code.RUNTIMEINCONSISTENCY.intValue(), null);
                     } else {
                         /* Prep the request and convert to a Txn */
                         try {
@@ -752,7 +752,7 @@ public class PrepRequestProcessor extends ZooKeeperCriticalThread implements Req
                         } catch (KeeperException e) {
                             ke = e;
                             type = OpCode.error;
-                            txn = new ErrorTxn(e.code().intValue());
+                            txn = new ErrorTxn(e.code().intValue(), e.getPath());
 
                             if (e.code().intValue() > Code.APIERROR.intValue()) {
                                 LOG.info("Got user-level KeeperException when processing {} aborting"
@@ -816,7 +816,7 @@ public class PrepRequestProcessor extends ZooKeeperCriticalThread implements Req
         } catch (KeeperException e) {
             if (request.getHdr() != null) {
                 request.getHdr().setType(OpCode.error);
-                request.setTxn(new ErrorTxn(e.code().intValue()));
+                request.setTxn(new ErrorTxn(e.code().intValue(), e.getPath()));
             }
 
             if (e.code().intValue() > Code.APIERROR.intValue()) {
@@ -845,7 +845,7 @@ public class PrepRequestProcessor extends ZooKeeperCriticalThread implements Req
             LOG.error("Dumping request buffer: 0x" + sb.toString());
             if (request.getHdr() != null) {
                 request.getHdr().setType(OpCode.error);
-                request.setTxn(new ErrorTxn(Code.MARSHALLINGERROR.intValue()));
+                request.setTxn(new ErrorTxn(Code.MARSHALLINGERROR.intValue(), null));
             }
         }
         request.zxid = zks.getZxid();

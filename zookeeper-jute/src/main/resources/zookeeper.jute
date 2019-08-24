@@ -187,6 +187,7 @@ module org.apache.zookeeper.proto {
     }
     class ErrorResponse {
         int err;
+        ustring path;
     }
     class CreateResponse {
         ustring path;
@@ -328,6 +329,7 @@ module org.apache.zookeeper.txn {
     }
     class ErrorTxn {
         int err;
+        ustring path;
     }
     class Txn {
         int type;
